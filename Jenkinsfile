@@ -8,21 +8,24 @@ pipeline {
     stages {
         stage('Requirements') {
             steps {
-                bat 'pip install -r requirements.txt'
+                // The 'chmod' command is specific to Linux/macOS and is not
+                // needed on Windows to make a script executable.
+                // We remove that step.
+                echo "Skipping chmod, not required on Windows."
             }
         }
         stage('Build') {
             steps {
-                bat 'python app.py'
-            }
-        }
-    }
-}
+                // 'sh' is for Linux/macOS. 'bat' is for Windows.
+                // You MUST rename your 'algorithm.sh' script to 'algorithm.bat'
+                // and convert its contents to Windows Batch commands.
+                bat '.\\algorithm.bat'
+
                 // this step archives the report
                 archiveArtifacts allowEmptyArchive: true,
-                    artifacts: '*.txt',
-                    fingerprint: true,
-                    onlyIfSuccessful: true
+                        artifacts: '*.txt',
+                        fingerprint: true,
+                        onlyIfSuccessful: true
             }
         }
     }
